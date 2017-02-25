@@ -1,19 +1,19 @@
-package diskUnit;
+package diskUtilities;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.security.InvalidParameterException;
 
-import Utils.Utils;
-import virtualDisk.VirtualDiskBlock;
+import exceptions.ExistingDiskException;
+import exceptions.InvalidBlockException;
+import exceptions.InvalidBlockNumberException;
+import exceptions.NonExistingDiskException;
 
 public class DiskUnit {
 
-	private static final int 
-	DEFAULT_CAPACITY = 1024;  // default number of blocks 	
-	private static final int
-	DEFAULT_BLOCK_SIZE = 256; // default number of bytes per block
+	private static final int DEFAULT_CAPACITY = 1024;  // default number of blocks 	
+	private static final int DEFAULT_BLOCK_SIZE = 256; // default number of bytes per block
 
 	private int capacity;     	// number of blocks of current disk instance
 	private int blockSize; 	// size of each block of current disk instance
@@ -48,28 +48,47 @@ public class DiskUnit {
 
 
 	public void write(int blockNum, VirtualDiskBlock b) throws InvalidBlockNumberException, InvalidBlockException {
-
+		if(blockNum < 0 || blockNum >= capacity)
+			throw new InvalidBlockNumberException("Write: Block number " + blockNum + " "
+					+ "received is not valid for the current disk instance");
+		
+		if(b == null || b.getCapacity() != blockSize)
+			throw new InvalidBlockException("Write: Does not represent a valid disk block "
+					+ "for the current disk instance (null or wrong size)");
+		
+		try {
+			disk.seek(8 + blockNum*blockSize);
+			for(int i = 0; i < blockSize; i++){
+				disk.writeByte(b.getElement(i));
+			}
+		} catch (IOException e) {
+			System.err.println("read: IO Error");
+		}
 	}
 
 	public void read(int blockNum, VirtualDiskBlock b) throws InvalidBlockNumberException, InvalidBlockException{
-
+		
+		if(blockNum < 0 || blockNum >= capacity)
+			throw new InvalidBlockNumberException("Read: Block number " + blockNum + " "
+					+ "received is not valid for the current disk instance");
+		
+		if(b == null || b.getCapacity() != blockSize)
+			throw new InvalidBlockException("Read: Does not represent a valid disk block "
+					+ "for the current disk instance (null or wrong size)");
+		try {
+			disk.seek(blockNum*blockSize);
+			for(int i = 0; i < blockSize; i++){
+				b.setElement(i, disk.readByte());
+			}
+		} catch (IOException e) {
+			System.err.println("read: IO Error");
+		}
 	}
 
 	public int getCapacity() { return capacity; }
 
 	public int getBlockSize(){ return blockSize; }
 
-
-	private void seek(int i) {
-		// TODO Auto-generated method stub
-
-	}
-
-
-	private int readInt() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	/**
 	 * Turns on an existing disk unit whose name is given. If successful, it makes
@@ -79,10 +98,12 @@ public class DiskUnit {
 	 * @throws NonExistingDiskException whenever no
 	 *    ¨disk¨ with the specified name is found.
 	 */
+	
 	public static DiskUnit mount(String name)
 			throws NonExistingDiskException
 	{
 		File file=new File(name);
+		
 		if (!file.exists())
 			throw new NonExistingDiskException("No disk has name : " + name);
 
@@ -112,6 +133,7 @@ public class DiskUnit {
 	 * @throws ExistingDiskException whenever the name attempted is
 	 * already in use.
 	 */
+	
 	public static void createDiskUnit(String name)
 			throws ExistingDiskException
 	{
@@ -134,17 +156,21 @@ public class DiskUnit {
 			throws ExistingDiskException, InvalidParameterException
 	{
 		File file=new File(name);
+		
 		if (file.exists())
 			throw new ExistingDiskException("Disk name is already used: " + name);
 
 		RandomAccessFile disk = null;
+		
 		if (capacity < 0 || blockSize < 0 ||
 				!Utils.powerOf2(capacity) || !Utils.powerOf2(blockSize))
 			throw new InvalidParameterException("Invalid values: " +
 					" capacity = " + capacity + " block size = " +
 					blockSize);
+		
 		// disk parameters are valid... hence create the file to represent the
 		// disk unit.
+		
 		try {
 			disk = new RandomAccessFile(name, "rw");
 		}
@@ -174,6 +200,7 @@ public class DiskUnit {
 
 		// write disk parameters (number of blocks, bytes per block) in
 		// block 0 of disk space
+		
 		try {
 			disk.seek(0);
 			disk.writeInt(capacity);  
@@ -182,6 +209,8 @@ public class DiskUnit {
 			e.printStackTrace();
 		} 	
 	}
+	
+
 
 
 }
