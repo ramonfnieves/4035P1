@@ -23,9 +23,11 @@ public class DiskUnitTester0 {
 			DiskUnit.createDiskUnit("disk3", 256, 64);
 			DiskUnit.createDiskUnit("disk4", 256, 128);
 			DiskUnit.createDiskUnit("disk5", 256, 8);
+			
 		} catch (InvalidParameterException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 		} catch (ExistingDiskException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -53,7 +55,9 @@ public class DiskUnitTester0 {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}  			
+			
 			splitAndWriteToDisk(s, d);  
+			
 			d.shutdown(); 
 		}
 
@@ -61,6 +65,7 @@ public class DiskUnitTester0 {
 
 
 	private static void splitAndWriteToDisk(String s, DiskUnit d) {
+		
 		// The following is the list of blocks from the virtual
 		// disk that are assigned to the file. The first block
 		// for the file is block 1. Each block has a "next block"
@@ -97,6 +102,7 @@ public class DiskUnitTester0 {
 		boolean done = false; 
 		int chn = 0, bn = 0; 
 		byte[] barr = new byte[bsize]; 
+		
 		while (!done) { 
 			int b = 0; 
 			for (int i=0; i<chunkSize && chn < s.length(); i++) { 
@@ -111,11 +117,14 @@ public class DiskUnitTester0 {
 
 			// copy the content of barr to block number fileBlocks[bn-1]
 			// in the virtual disk unit
+			
 			for (int i=0; i<chunkSize; i++)  
 				vdb.setElement(i, barr[i]);  			
 
 			copyNextBNToBlock(vdb, fileBlocks[bn+1]); 
+
 			bn++;
+			
 			if ((chn >= s.length() || bn >= fileBlocks.length)) { 
 				copyNextBNToBlock(vdb, 0); 
 				done = true; 
@@ -130,9 +139,7 @@ public class DiskUnitTester0 {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
-
 		}
-
 	}
 
 	public static void copyNextBNToBlock(VirtualDiskBlock vdb, int value) { 
@@ -142,8 +149,6 @@ public class DiskUnitTester0 {
 			vdb.setElement(lastPos - index, (byte) (value & 0x000000ff)); 	
 			value = value >> 8; 
 		}
-
 	}
-
 }
 

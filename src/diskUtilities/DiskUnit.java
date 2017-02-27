@@ -111,10 +111,12 @@ public class DiskUnit {
 
 		// get the capacity and the block size of the disk from the file
 		// representing the disk
+		
 		try {
 			dUnit.disk.seek(0);
 			dUnit.capacity = dUnit.disk.readInt();
 			dUnit.blockSize = dUnit.disk.readInt();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -163,7 +165,7 @@ public class DiskUnit {
 		RandomAccessFile disk = null;
 		
 		if (capacity < 0 || blockSize < 0 ||
-				!Utils.powerOf2(capacity) || !Utils.powerOf2(blockSize))
+				!Utils.power2(capacity) || !Utils.power2(blockSize))
 			throw new InvalidParameterException("Invalid values: " +
 					" capacity = " + capacity + " block size = " +
 					blockSize);

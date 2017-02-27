@@ -13,9 +13,7 @@ public class DiskUnitTester1 {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
 		DiskUnit d = null;
-		
 		try {
 			d = DiskUnit.mount("disk1");
 		} catch (NonExistingDiskException e) {
@@ -26,21 +24,16 @@ public class DiskUnitTester1 {
 	    showDiskContent(d); 
 		
 		showFileInDiskContent(d);   
-		
 		d.shutdown(); 
 	}
 
 		
 	private static void showFileInDiskContent(DiskUnit d) { 
-		
 		VirtualDiskBlock vdb = new VirtualDiskBlock(d.getBlockSize()); 
 		
 		System.out.println("\nContent of the file begining at block 1"); 
-		
 		int bn = 1; 
-		
 		while (bn != 0) { 
-			
 			try {
 				d.read(bn, vdb);
 			} catch (InvalidBlockNumberException e) {
@@ -50,7 +43,6 @@ public class DiskUnitTester1 {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
-			
 			showVirtualDiskBlock(bn, vdb);
 			bn = getNextBNFromBlock(vdb);			
 		}
@@ -64,9 +56,7 @@ public class DiskUnitTester1 {
 		System.out.println("Size of blocks in the disk is: " + d.getBlockSize()); 
 		
 		VirtualDiskBlock block = new VirtualDiskBlock(d.getBlockSize()); 
-		
 		for (int b = 0; b < d.getCapacity(); b++) { 
-			
 			try {
 				d.read(b, block);
 			} catch (InvalidBlockNumberException e) {
@@ -76,7 +66,6 @@ public class DiskUnitTester1 {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
-			
 			showVirtualDiskBlock(b, block); 
 		}
 		
@@ -84,7 +73,6 @@ public class DiskUnitTester1 {
 
 	private static void showVirtualDiskBlock(int b, VirtualDiskBlock block) {
 	    System.out.print(" Block "+ b + "\t"); 
-	    
 	    for (int i=0; i<block.getCapacity(); i++) {
 	    	char c = (char) block.getElement(i); 
 	    	if (Character.isLetterOrDigit(c))
@@ -92,13 +80,11 @@ public class DiskUnitTester1 {
 	    	else
 	    		System.out.print('-'); 
 	    }
-	    
 	    System.out.println(); 
 	}
 
 	
 	public static void copyNextBNToBlock(VirtualDiskBlock vdb, int value) { 
-		
 		int lastPos = vdb.getCapacity()-1;
 
 		for (int index = 0; index < 4; index++) { 
@@ -109,17 +95,14 @@ public class DiskUnitTester1 {
 	}
 	
 	private static int getNextBNFromBlock(VirtualDiskBlock vdb) { 
-		
 		int bsize = vdb.getCapacity(); 
 		int value = 0; 
 		int lSB; 
-		
 		for (int index = 3; index >= 0; index--) { 
 			value = value << 8; 
 			lSB = 0x000000ff & vdb.getElement(bsize-1-index);
 			value = value | lSB; 
 		}
-		
 		return value; 
 
 	}
