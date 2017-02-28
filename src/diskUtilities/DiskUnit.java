@@ -46,9 +46,15 @@ public class DiskUnit {
 		}
 	}
 
-
+	/**
+	 * Writes the content of the virtual block into the disk block corresponding to block number.
+	 * @param blockNum
+	 * @param b
+	 * @throws InvalidBlockNumberException whenever the block number received is not valid for the current disk instance.
+	 * @throws InvalidBlockException whenever virtual disk does not represent a valid disk block for the current disk instance.
+	 */
 	public void write(int blockNum, VirtualDiskBlock b) throws InvalidBlockNumberException, InvalidBlockException {
-		if(blockNum < 0 || blockNum >= capacity)
+		if(blockNum < 0 || blockNum >= this.getCapacity())
 			throw new InvalidBlockNumberException("Write: Block number " + blockNum + " "
 					+ "received is not valid for the current disk instance");
 		
@@ -66,6 +72,14 @@ public class DiskUnit {
 		}
 	}
 
+	/**
+	 * Reads a given block from the disk. The content of the specified disk block
+	 * is copied as the new content of the current instance of block being referenced by of virtual disk.
+	 * @param blockNum
+	 * @param b
+	 * @throws InvalidBlockNumberException whenever the block number received is not valid for the current disk instance.
+	 * @throws InvalidBlockException whenever virtual disk does not represent a valid disk block for the current disk instance.
+	 */
 	public void read(int blockNum, VirtualDiskBlock b) throws InvalidBlockNumberException, InvalidBlockException{
 		
 		if(blockNum < 0 || blockNum >= capacity)
@@ -84,9 +98,19 @@ public class DiskUnit {
 			System.err.println("read: IO Error");
 		}
 	}
-
+	
+	/**
+	 * Returns a nonnegative integer value corresponding to the number of valid 
+	 * blocks (unused + used) that the current disk instance has. 
+	 * @return
+	 */
 	public int getCapacity() { return capacity; }
 
+	/**
+	 * Returns a nonnegative integer value which corresponds to the size 
+	 * (number of character elements) of a block in the current disk instance. 
+	 * @return
+	 */
 	public int getBlockSize(){ return blockSize; }
 
 
@@ -212,7 +236,7 @@ public class DiskUnit {
 		} 	
 	}
 	
-/*	public void lowLevelFormat() {
+	public void lowLevelFormat() {
 		try {
 			disk.seek(8);
 			disk.write(new byte[capacity*blockSize]);
@@ -221,7 +245,7 @@ public class DiskUnit {
 		}
 
 	}
-*/
+
 
 
 }
