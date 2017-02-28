@@ -76,7 +76,7 @@ public class DiskUnit {
 			throw new InvalidBlockException("Read: Does not represent a valid disk block "
 					+ "for the current disk instance (null or wrong size)");
 		try {
-			disk.seek(blockNum*blockSize);
+			disk.seek(8 + blockNum*blockSize);
 			for(int i = 0; i < blockSize; i++){
 				b.setElement(i, disk.readByte());
 			}
@@ -212,7 +212,16 @@ public class DiskUnit {
 		} 	
 	}
 	
+/*	public void lowLevelFormat() {
+		try {
+			disk.seek(8);
+			disk.write(new byte[capacity*blockSize]);
+		} catch (IOException e){
+			System.err.println("Format: IO Error");
+		}
 
+	}
+*/
 
 
 }

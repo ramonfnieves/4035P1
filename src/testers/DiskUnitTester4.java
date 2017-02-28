@@ -7,7 +7,7 @@ import exceptions.InvalidBlockException;
 import exceptions.InvalidBlockNumberException;
 import exceptions.NonExistingDiskException;
 
-public class DiskUnitTester1 {
+public class DiskUnitTester4 {
 
 	/**
 	 * @param args
@@ -15,7 +15,7 @@ public class DiskUnitTester1 {
 	public static void main(String[] args) {
 		DiskUnit d = null;
 		try {
-			d = DiskUnit.mount("disk1");
+			d = DiskUnit.mount("disk4");
 		} catch (NonExistingDiskException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
